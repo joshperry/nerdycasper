@@ -6,7 +6,7 @@ const livereload = require('gulp-livereload');
 const postcss = require('gulp-postcss');
 const zip = require('gulp-zip');
 const concat = require('gulp-concat');
-const uglify = require('gulp-uglify');
+const terser = require('gulp-terser');
 const beeper = require('beeper');
 const fs = require('fs');
 
@@ -48,7 +48,7 @@ function css(done) {
     ];
 
     pump([
-        src('assets/css/*.css', {sourcemaps: true}),
+        src('assets/css/**/*.css', {sourcemaps: true}),
         postcss(processors),
         concat('casper.css'),
         dest('assets/built/', {sourcemaps: '.'}),
@@ -58,13 +58,8 @@ function css(done) {
 
 function js(done) {
     pump([
-        src([
-            // pull in lib files first so our own code can depend on it
-            'assets/js/lib/*.js',
-            'assets/js/*.js'
-        ], {sourcemaps: true}),
-        concat('casper.js'),
-        uglify(),
+        src(['assets/js/**/*.js'], {sourcemaps: true}),
+        terser(),
         dest('assets/built/', {sourcemaps: '.'}),
         livereload()
     ], handleError(done));
@@ -88,7 +83,8 @@ function zipper(done) {
 
 const cssWatcher = () => watch('assets/css/**', css);
 const hbsWatcher = () => watch(['*.hbs', 'partials/**/*.hbs'], hbs);
-const watcher = parallel(cssWatcher, hbsWatcher);
+const jsWatcher = () => watch(['assets/js/**/*.js'], js);
+const watcher = parallel(cssWatcher, hbsWatcher, jsWatcher);
 const build = series(css, js);
 const dev = series(build, serve, watcher);
 
@@ -146,11 +142,11 @@ const previousRelease = () => {
 
 /**
  *
- * `yarn ship` will trigger `postship` task.
+ * `npm run ship` will trigger `postship` task.
  *
  * [optional] For full automation
  *
- * `GHOST=2.10.1,2.10.0 yarn ship`
+ * `GHOST=2.10.1,2.10.0 npm run ship`
  * First value: Ships with Ghost
  * Second value: Compatible with Ghost/GScan
  *
@@ -159,7 +155,6 @@ const previousRelease = () => {
  * `npm_package_version=0.5.0 gulp release`
  */
 const release = () => {
-    // @NOTE: https://yarnpkg.com/lang/en/docs/cli/version/
     // require(./package.json) can run into caching issues, this re-reads from file everytime on release
     var packageJSON = JSON.parse(fs.readFileSync('./package.json'));
     const newVersion = packageJSON.version;
