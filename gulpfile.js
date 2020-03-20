@@ -48,7 +48,7 @@ function css(done) {
     ];
 
     pump([
-        src('assets/css/**/*.css', {sourcemaps: true}),
+        src(['assets/css/lib/*.css', 'assets/css/screen.css'], {sourcemaps: true}),
         postcss(processors),
         concat('casper.css'),
         dest('assets/built/', {sourcemaps: '.'}),
