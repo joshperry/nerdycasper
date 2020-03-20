@@ -2182,6 +2182,71 @@ Usage (In Ghost editor):
     margin: 0;
 }
 
+/** Prism code blocks expand on hover **/
+@media (min-width: 800px) {
+  .kg-code-card pre[class*="language-"].active {
+    margin-left: -24%;
+  }
+
+  pre[class*="language-"].active {
+    max-width: 148%;
+    width: 148%;
+    /*margin-left: -25%;*/
+    transition-duration: 200ms;
+    transition-timing-function: ease-out;
+  }
+
+  pre[class*="language-"] {
+    position: relative;
+    width: 100%;
+    transition-property: max-width, width, margin-left;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in;
+  }
+}
+
+@media (max-width: 800px) {
+  .kg-code-card pre[class*="language-"].active {
+    margin-left: -12%;
+  }
+
+  pre[class*="language-"].active {
+    max-width: 124%;
+    width: 124%;
+    /*margin-left: -25%;*/
+    transition-duration: 200ms;
+    transition-timing-function: ease-out;
+  }
+
+  pre[class*="language-"] {
+    position: relative;
+    transition-property: max-width, width, margin-left;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in;
+  }
+}
+
+@media (max-width: 500px) {
+  .kg-code-card pre[class*="language-"].active {
+    margin-left: -5%;
+  }
+
+  pre[class*="language-"].active {
+    max-width: 110%;
+    width: 110%;
+    /*margin-left: -25%;*/
+    transition-duration: 200ms;
+    transition-timing-function: ease-out;
+  }
+
+  pre[class*="language-"] {
+    position: relative;
+    transition-property: max-width, width, margin-left;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in;
+  }
+}
+
 .kg-bookmark-card {
     width: 100%;
 }
