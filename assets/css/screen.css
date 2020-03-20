@@ -2197,7 +2197,6 @@ Usage (In Ghost editor):
   }
 
   pre[class*="language-"] {
-    position: relative;
     width: 100%;
     transition-property: max-width, width, margin-left;
     transition-duration: 300ms;
