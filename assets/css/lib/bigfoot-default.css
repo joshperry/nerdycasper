@@ -10,10 +10,10 @@
   border: none;
   border-radius: 0.3em;
   cursor: pointer;
-  background-color: rgba(110, 110, 110, 0.2);
+  background-color: #26a8ed;
   -webkit-backface-visibility: hidden;
           backface-visibility: hidden;
-  font-size: 1rem;
+  font-size: 1.22rem;
   line-height: 0;
   vertical-align: middle;
   text-decoration: none;
@@ -25,13 +25,13 @@
 }
 .bigfoot-footnote__button:hover, .bigfoot-footnote__button:focus {
   outline: none;
-  background-color: rgba(110, 110, 110, 0.5);
+  background-color: #7cc7ef;
 }
 .bigfoot-footnote__button:active {
   background-color: rgba(110, 110, 110, 0.5);
 }
 .bigfoot-footnote__button.is-active {
-  background-color: #6e6e6e;
+  background-color: #058cd4;
   -webkit-transition-delay: 0.1s;
           transition-delay: 0.1s;
 }

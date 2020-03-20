@@ -8,7 +8,11 @@ define(require => {
     prism.highlightAll()
 
     // Start bigfootjs footnotes
-    $.bigfoot()
+    $.bigfoot({
+      activateOnHover: true,
+      deleteOnUnhover: true,
+      hoverDelay: 3000,
+    })
   })
 
   /**
