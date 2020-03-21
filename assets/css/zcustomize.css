@@ -1,0 +1,5 @@
+/* Customizations to the default template styles */
+.site-logo {
+  max-height: 130px;
+  filter: invert(1);
+}
