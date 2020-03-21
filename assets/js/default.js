@@ -8,7 +8,6 @@ const sri = {
   katex: 'sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq'
 }
 
-//var scriptpath = $("script[src]").last().attr("src").split('?')[0].split('/').slice(0, -1).join('/')
 function getScriptPath() {
   const scripts = document.getElementsByTagName('script')
   const scriptUrl = new URL(scripts[scripts.length-1].src)
@@ -25,8 +24,7 @@ require.config({
   },
 
   shim: {
-    waypoints : { exports: 'Waypoint' },
-    bigfoot: { deps: ['jquery'] },
+    waypoints: { exports: 'Waypoint' },
     prism: { exports: 'Prism' },
     katex: {
       init: () => {
@@ -65,24 +63,24 @@ function loadcss(url, srihash) {
 /**
  * Site-wide logic
  */
-require(['jquery'], ($) => {
+require([], () => {
   /**
    * Members subscription logic
    */
-  $(() => {
+  document.addEventListener('DOMContentLoaded', () => {
     if (getParameterByName('action') == 'subscribe') {
-      $('body').addClass("subscribe-success")
+      document.body.classList.add('subscribe-success')
     }
 
-    $('.subscribe-success-message .subscribe-close').click(function () {
-      $('.subscribe-success-message').addClass('close')
-    })
+    document.querySelector('.subscribe-success-message .subscribe-close').onclick = function () {
+      document.querySelector('.subscribe-success-message').classList.add('close')
+    }
 
     // Reset form on opening subscrion overlay
-    $('.subscribe-button').click(function() {
-      $('.subscribe-overlay form').removeClass()
-      $('.subscribe-email').val('')
-    })
+    document.querySelector('.subscribe-button').onclick = function() {
+      document.querySelector('.subscribe-overlay form').className = ''
+      document.querySelector('.subscribe-email').value = ''
+    }
   })
 
   // Parse the URL parameter

@@ -1,16 +1,20 @@
+/**
+ * This module contains code that is common between both the Page and Post views
+ */
 define(require => {
+
   // Startup content plugins
-  require(['jquery', 'prism', 'jquery.fitvids', 'bigfoot'], ($, prism) => {
-    // Run fitvids plugin
-    $(".post-full-content").fitVids()
+  require(['prism', 'reframe', 'littlefoot'], (prism, reframe, {littlefoot}) => {
+    // Run reframe plugin to make framed content responsive
+    reframe('.post-full-content', 'fluid-width-video-wrapper')
 
     // Fire up the syntax highlighter
     prism.highlightAll()
 
     // Start bigfootjs footnotes
-    $.bigfoot({
+    littlefoot({
       activateOnHover: true,
-      deleteOnUnhover: true,
+      dismissOnUnhover: true,
       hoverDelay: 3000,
     })
   })
@@ -21,16 +25,12 @@ define(require => {
    * Detects when a gallery card has been used and applies sizing to make sure
    * the display matches what is seen in the editor.
    */
-  require(['jquery'], ($) => {
-    $(function resizeImagesInGalleries() {
-      var images = document.querySelectorAll('.kg-gallery-image img')
-      images.forEach(function (image) {
-        var container = image.closest('.kg-gallery-image')
-        var width = image.attributes.width.value
-        var height = image.attributes.height.value
-        var ratio = width / height
-        container.style.flex = ratio + ' 1 0%'
-      })
+  require([], () => {
+    const images = document.querySelectorAll('.kg-gallery-image img')
+    images.forEach(image => {
+      const container = image.closest('.kg-gallery-image')
+      const ratio = image.attributes.width.value / image.attributes.height.value
+      container.style.flex = ratio + ' 1 0%'
     })
   })
 
@@ -38,8 +38,8 @@ define(require => {
    * Code expansion logic
    *
    * Expands code elements as the top is scrolled up into the top 75% of the page,
-   * or the bottom down into the bottom 75%. Collapses the elements when the the edges
-   * leave these boundaries.
+   * or the bottom down into the bottom 75%. Collapses the elements when either edge
+   * is not inside the middle 50% of the view.
    */
   require(['ramda', 'waypoints'], function(R, Waypoint) {
     // Map `this` to the first parameter on a provided function, then remainging args
@@ -72,4 +72,5 @@ define(require => {
       document.querySelectorAll('pre[class*="language-"]')
     )
   })
+
 })

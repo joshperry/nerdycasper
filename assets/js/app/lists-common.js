@@ -17,99 +17,99 @@ define(require => {
     // TODO: Update to use waypoints.js
 
     // next link element
-    var nextElement = document.querySelector('link[rel=next]');
+    let nextElement = document.querySelector('link[rel=next]')
     if (!nextElement) {
-      return;
+      return
     }
 
     // post feed element
-    const feedElement = document.querySelector('.post-feed');
+    const feedElement = document.querySelector('.post-feed')
     if (!feedElement) {
       return;
     }
 
-    const buffer = 300;
+    const buffer = 300
 
-    var ticking = false;
-    var loading = false;
+    let ticking = false
+    let loading = false
 
-    var lastScrollY = window.scrollY;
-    var lastWindowHeight = window.innerHeight;
-    var lastDocumentHeight = document.documentElement.scrollHeight;
+    let lastScrollY = window.scrollY
+    let lastWindowHeight = window.innerHeight
+    let lastDocumentHeight = document.documentElement.scrollHeight
 
     function onPageLoad() {
       if (this.status === 404) {
-        window.removeEventListener('scroll', onScroll);
-        window.removeEventListener('resize', onResize);
+        window.removeEventListener('scroll', onScroll)
+        window.removeEventListener('resize', onResize)
         return;
       }
 
       // append contents
-      const postElements = this.response.querySelectorAll('.post-card');
+      const postElements = this.response.querySelectorAll('.post-card')
       postElements.forEach(function (item) {
         // document.importNode is important, without it the item's owner
         // document will be different which can break resizing of
         // `object-fit: cover` images in Safari
-        feedElement.appendChild(document.importNode(item, true));
+        feedElement.appendChild(document.importNode(item, true))
       });
 
       // set next link
-      const resNextElement = this.response.querySelector('link[rel=next]');
+      const resNextElement = this.response.querySelector('link[rel=next]')
       if (resNextElement) {
-        nextElement.href = resNextElement.href;
+        nextElement.href = resNextElement.href
       } else {
-        window.removeEventListener('scroll', onScroll);
-        window.removeEventListener('resize', onResize);
+        window.removeEventListener('scroll', onScroll)
+        window.removeEventListener('resize', onResize)
       }
 
       // sync status
-      lastDocumentHeight = document.documentElement.scrollHeight;
-      ticking = false;
-      loading = false;
+      lastDocumentHeight = document.documentElement.scrollHeight
+      ticking = false
+      loading = false
     }
 
     function onUpdate() {
       // return if already loading
       if (loading) {
-        return;
+        return
       }
 
       // return if not scroll to the bottom
       if (lastScrollY + lastWindowHeight <= lastDocumentHeight - buffer) {
-        ticking = false;
-        return;
+        ticking = false
+        return
       }
 
-      loading = true;
+      loading = true
 
-      const xhr = new window.XMLHttpRequest();
-      xhr.responseType = 'document';
+      const xhr = new window.XMLHttpRequest()
+      xhr.responseType = 'document'
 
-      xhr.addEventListener('load', onPageLoad);
+      xhr.addEventListener('load', onPageLoad)
 
-      xhr.open('GET', nextElement.href);
-      xhr.send(null);
+      xhr.open('GET', nextElement.href)
+      xhr.send(null)
     }
 
     function requestTick() {
-      ticking || window.requestAnimationFrame(onUpdate);
-      ticking = true;
+      ticking || window.requestAnimationFrame(onUpdate)
+      ticking = true
     }
 
     function onScroll() {
-      lastScrollY = window.scrollY;
-      requestTick();
+      lastScrollY = window.scrollY
+      requestTick()
     }
 
     function onResize() {
-      lastWindowHeight = window.innerHeight;
-      lastDocumentHeight = document.documentElement.scrollHeight;
-      requestTick();
+      lastWindowHeight = window.innerHeight
+      lastDocumentHeight = document.documentElement.scrollHeight
+      requestTick()
     }
 
-    window.addEventListener('scroll', onScroll, {passive: true});
-    window.addEventListener('resize', onResize);
+    window.addEventListener('scroll', onScroll, {passive: true})
+    window.addEventListener('resize', onResize)
 
-    requestTick();
+    requestTick()
   })
 })

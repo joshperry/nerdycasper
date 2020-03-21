@@ -6,34 +6,32 @@ require(['app/content-common'])
 /**
  * Post specific logic
  */
-require(['jquery'], $ => {
-  $(() => {
-    // Replace nav with title on scroll
-    stickyNavTitle({
-      navSelector: '.site-nav-main',
-      titleSelector: '.post-full-title',
-      activeClass: 'nav-post-title-active'
-    })
-
-    // Hover on avatar
-    var hoverTimeout
-    $('.author-list-item').hover(function() {
-      // Clear any pending unhovers
-      clearTimeout(hoverTimeout)
-
-      // Clear any other hovers in the author list
-      $('.author-card').removeClass('hovered')
-
-      // Add the hover class to the target card
-      $(this).find('.author-card').addClass('hovered')
-    }, function() {
-      // Hide the hover after a timeout
-      hoverTimeout = setTimeout(
-        () => $(this).find('.author-card').removeClass('hovered'),
-        800
-      )
-		})
+require([], () => {
+  // Replace nav with title on scroll
+  stickyNavTitle({
+    navSelector: '.site-nav-main',
+    titleSelector: '.post-full-title',
+    activeClass: 'nav-post-title-active'
   })
+
+  // Show author card when avatar is hovered
+  document.querySelectorAll('.author-list-item')
+    .forEach(authorel => {
+      let card
+      authorel.addEventListener('mouseover', () => {
+        // Add the hover class to the target card
+        card = card || authorel.querySelector('.author-card')
+        card.classList.add('hovered')
+      })
+
+      authorel.addEventListener('mouseout', () => {
+        // Hide the hover after a timeout
+        setTimeout(
+          () => card.classList.remove('hovered'),
+          800
+        )
+      })
+    })
 
   /**
    * Nav/Title replacement
