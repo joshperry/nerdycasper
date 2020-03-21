@@ -37,53 +37,39 @@ define(require => {
   /**
    * Code expansion logic
    *
-   * Expands code elements as they're scrolled into the center of the page view for easier reading
+   * Expands code elements as the top is scrolled up into the top 75% of the page,
+   * or the bottom down into the bottom 75%. Collapses the elements when the the edges
+   * leave these boundaries.
    */
-  require(['jquery', 'ramda', 'jquery.waypoints'], function($, R, Waypoint) {
-    var makeWaypoint = R.curry(function(handler, element, offset) {
-      return new Waypoint({ element: element, handler: handler, offset: offset });
-    });
+  require(['ramda', 'waypoints'], function(R, Waypoint) {
+    // Map `this` to the first parameter on a provided function, then remainging args
+    // Waypoints uses `this` to provide the element to handler and offset functions
+    const ttp = f => function(...args){ return f(this, ...args) }
 
-    var toggleClass = R.curry(function(className, dir) {
-      $(this.element).toggleClass(className);
-    });
+    // Waypoint handlers for elements
+    const toggleClass = R.curry((className, wpt, dir) => wpt.element.classList.toggle(className))
 
-    var toggleActiveClass = toggleClass('active');
+    // Create a waypoint instance
+    const makeWaypoint = R.curry((handler, offset, element) =>
+      new Waypoint({
+        element,
+        handler: ttp(handler),
+        offset: typeof offset == 'function' ? ttp(offset) : offset
+      })
+    )
 
-    var makeOffsets = R.chain(R.__, [
-      '75%',
-      function() {
-        return Waypoint.viewportHeight() / 4 - this.element.offsetHeight;
-      }
-    ]);
-
-    var snippets = document.querySelectorAll('pre[class*="language-"]');
-
-    var waypoints = R.chain(R.compose(makeOffsets, makeWaypoint(toggleActiveClass)), snippets);
-
-    /*
-    var toggleClass = _.curry(function(className) {
-      $(this.element).toggleClass(className);
-    });
-
-    var toggleActiveClass = toggleClass('active');
-
-    // Get all code blocks on the page
-    var codes = $('pre[class*="language-"]');
-
-
-    // Waypoints for top of a code element transitioning the bottom nth of the window
-    // By default, the handler is triggered when the top of an element
-    // hits the top of the viewport offset.
-    codes.waypoint(toggleActiveClass, { offset: '75%' });
-
-    // Bottom of a code element transitioning the top quarter of the window
-    // We use an offset function to calculate the trigger from the bottom of the element.
-    codes.waypoint(toggleActiveClass, {
-      offset: function() {
-        return Waypoint.viewportHeight() / 4 - this.element.offsetHeight;
-      }
-    });
-    */
+    // Create the waypoints
+    const waypoints = R.chain( // Flat map our elements over the curried constructors
+      R.applySpec( // Func that applies the list of constructors to an element value
+        R.map( // Create a curried waypoint constructor for each offset
+          makeWaypoint(toggleClass('active')),
+          [
+            '75%',
+            wpt => Waypoint.viewportHeight() / 4 - wpt.element.offsetHeight
+          ]
+        )
+      ),
+      document.querySelectorAll('pre[class*="language-"]')
+    )
   })
 })

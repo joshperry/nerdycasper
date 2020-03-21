@@ -27,11 +27,11 @@ require(['jquery'], $ => {
       // Add the hover class to the target card
       $(this).find('.author-card').addClass('hovered')
     }, function() {
-      const $this = $(this)
       // Hide the hover after a timeout
-      hoverTimeout = setTimeout(function () {
-        $this.find('.author-card').removeClass('hovered')
-      }, 800)
+      hoverTimeout = setTimeout(
+        () => $(this).find('.author-card').removeClass('hovered'),
+        800
+      )
 		})
   })
 

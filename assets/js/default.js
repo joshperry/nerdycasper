@@ -25,7 +25,7 @@ require.config({
   },
 
   shim: {
-    "jquery.waypoints": { deps: ['jquery'], exports: 'Waypoint' },
+    waypoints : { exports: 'Waypoint' },
     bigfoot: { deps: ['jquery'] },
     prism: { exports: 'Prism' },
     katex: {
