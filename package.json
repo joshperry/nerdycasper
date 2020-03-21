@@ -2,7 +2,7 @@
     "name": "nerdycasper",
     "description": "A nerdy, clean, minimal theme for nerdy users of the Ghost publishing platform",
     "demo": "https://curiouslynerdy.com",
-    "version": "1.0.0",
+    "version": "1.1.1",
     "engines": {
         "ghost": ">=3.0.0",
         "ghost-api": "v3"
@@ -23,9 +23,9 @@
         "postship": "git fetch && gulp release"
     },
     "author": {
-        "name": "Ghost Foundation",
-        "email": "hello@ghost.org",
-        "url": "https://ghost.org"
+        "name": "Josh Perry",
+        "email": "josh@6bit.com",
+        "url": "https://curiouslynerdy.com"
     },
     "gpm": {
         "type": "theme",
