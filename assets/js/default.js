@@ -67,7 +67,8 @@ require([], () => {
   /**
    * Members subscription logic
    */
-  document.addEventListener('DOMContentLoaded', () => {
+  const subbuttel = document.querySelector('.subscribe-button')
+  if(subbuttel) {
     if (getParameterByName('action') == 'subscribe') {
       document.body.classList.add('subscribe-success')
     }
@@ -77,11 +78,11 @@ require([], () => {
     }
 
     // Reset form on opening subscrion overlay
-    document.querySelector('.subscribe-button').onclick = function() {
+    subbuttel.onclick = function() {
       document.querySelector('.subscribe-overlay form').className = ''
       document.querySelector('.subscribe-email').value = ''
     }
-  })
+  }
 
   // Parse the URL parameter
   function getParameterByName(name, url) {
