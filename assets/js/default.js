@@ -9,8 +9,8 @@ const sri = {
 }
 
 function getScriptPath() {
-  const scripts = document.getElementsByTagName('script')
-  const scriptUrl = new URL(scripts[scripts.length-1].src)
+  const scriptel = document.getElementById('rootscript')
+  const scriptUrl = new URL(scriptel.src)
   return scriptUrl.pathname.split('/').slice(0, -1).join('/')
 }
 const scriptpath = getScriptPath();
