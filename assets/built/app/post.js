@@ -1,2 +1,0 @@
-require(["app/content-common"]),require(["waypoints"],e=>{new e({element:document.querySelector(".post-full-title"),handler:e=>document.querySelector(".site-nav-main").classList.toggle("nav-post-title-active","down"===e)}),document.querySelectorAll(".author-list-item").forEach(e=>{let t;e.addEventListener("mouseover",()=>{t=t||e.querySelector(".author-card"),t.classList.add("hovered")}),e.addEventListener("mouseout",()=>{setTimeout(()=>t.classList.remove("hovered"),800)})})});
-//# sourceMappingURL=post.js.map

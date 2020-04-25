@@ -1,2 +1,0 @@
-require(["app/lists-common"]),require(["waypoints"],e=>{new e({element:document.querySelector(".post-feed"),handler:e=>document.querySelector(".site-nav-main .site-nav").classList.toggle("fixed-nav-active","down"===e)})});
-//# sourceMappingURL=index.js.map

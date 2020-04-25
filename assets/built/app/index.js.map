@@ -1,1 +1,0 @@
-{"version":3,"sources":["app/index.js"],"names":["require","Waypoint","element","document","querySelector","handler","dir","classList","toggle"],"mappings":"AAGAA,QAAQ,CAAC,qBAKTA,QAAQ,CAAC,aAAeC,IAEvB,IAAIA,EAAS,CACZC,QAASC,SAASC,cAAc,cAChCC,QAASC,GAAOH,SACNC,cAAc,4BACdG,UAAUC,OAAO,mBAA4B,SAARF","file":"app/index.js"}
