@@ -60,7 +60,7 @@ define(require => {
 
     // Create the waypoints
     const waypoints = R.chain( // Flat map our elements over the curried constructors
-      R.applySpec( // Func that applies the list of constructors to an element value
+      R.juxt( // Func that applies the list of constructors to an element value
         R.map( // Create a curried waypoint constructor for each offset
           makeWaypoint(toggleClass('active')),
           [
@@ -69,7 +69,9 @@ define(require => {
           ]
         )
       ),
-      document.querySelectorAll('pre[class*="language-"]')
+      // We want to target the `pre` element that wraps the `code` element, it
+      // unfortunately has no distinctive attributes
+      R.map(el => el.parentElement, document.querySelectorAll('code[class*="language-"]'))
     )
   })
 
