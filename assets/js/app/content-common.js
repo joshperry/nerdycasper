@@ -6,7 +6,7 @@ define(require => {
   // Startup content plugins
   require(['prism', 'reframe', 'littlefoot'], (prism, reframe, {littlefoot}) => {
     // Run reframe plugin to make framed content responsive
-    reframe('.post-full-content', 'fluid-width-video-wrapper')
+    reframe('fluid-width-video-wrapper')
 
     // Fire up the syntax highlighter
     prism.highlightAll()
