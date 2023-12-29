@@ -19,7 +19,6 @@ require.config({
   baseUrl: `${scriptpath}/lib`,
 
   paths: {
-    app: '../app',
     katex: 'https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min',
   },
 
@@ -67,7 +66,7 @@ require([], () => {
   /**
    * Members subscription logic
    */
-  const subbuttel = document.querySelector('.subscribe-button')
+  const subbuttel = document.querySelector('.subscribe-butt')
   if(subbuttel) {
     if (getParameterByName('action') == 'subscribe') {
       document.body.classList.add('subscribe-success')

@@ -31,9 +31,12 @@ One neat trick is that you can also create custom one-off templates by adding th
 
 # Code Layout
 
-Require.js is used for dependency management and async module loading. There is a main `default.js` file which defines the configuration for requirejs and contains logic that is used site-wide.
+Require.js is used to define the module dependency graph, the async module loading interface, and a default module loader impl for the client.
+There is a main `default.js` file which defines the configuration for requirejs and contains logic that is used site-wide.
 
-The `require.js` and `default.js` scripts are loaded synchronously so that require and its config are guaranteed to be available to scripts loaded later.
+The `require.js` and `default.js` scripts are merged at build time so that the requirejs module loader and its config are guaranteed to be available to scripts loaded later.
+
+A content-based hash is added to built assets (like css and javascript). The `require.js` config is also patched to create a mapping for runtime loading of the correct filename with hash, for hbs files there is a fixup transformer.
 
 Vendored library dependencies are contained in the `assets/js/lib` folder, and application logic files are contained in `assets/js/app`.
 

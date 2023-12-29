@@ -25,7 +25,6 @@
 
           packages = with pkgs;[
             yarn
-            nodePackages.typescript-language-server
             nodePackages.eslint
           ];
         };
