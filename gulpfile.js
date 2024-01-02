@@ -41,12 +41,19 @@ const handleError = (done) => {
 const hbs = done =>
   pump(
     src(['*.hbs', 'partials/**/*.hbs'], {base: './'}),
-    // Replace src/href/etc refs to hashed files with the latest
-    fixuprefs('assets/built/assetmap.json'),
-    dest('./'),
     livereload(),
     handleError(done)
   )
+
+const hbsfixup = done => {
+  pump(
+    src(['*.hbs', 'partials/**/*.hbs'], {base: './'}),
+    // Replace src/href/etc refs to hashed files with the latest
+    fixuprefs('assets/built/assetmap.json'),
+    dest('./'),
+    handleError(done)
+  )
+}
 
 const css = done => {
   const processors = [
@@ -313,9 +320,9 @@ const publish = async () => {
 
 const cssWatcher = () => watch('assets/css/**', css)
 const hbsWatcher = () => watch(['*.hbs', 'partials/**/*.hbs'], hbs)
-const jsWatcher = () => watch(['assets/js/**/*.js'], js)
+const jsWatcher = () => watch(['assets/js/**/*.js'], series(js, hbsfixup))
 const watcher = parallel(cssWatcher, hbsWatcher, jsWatcher)
-const build = series(parallel(css, js), hbs)
+const build = series(parallel(css, js), hbsfixup)
 const dev = series(build, serve, watcher)
 
 exports.build = build
