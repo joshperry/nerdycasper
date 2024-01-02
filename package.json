@@ -4,8 +4,7 @@
     "demo": "https://curiouslynerdy.com",
     "version": "1.1.2",
     "engines": {
-        "ghost": ">=3.0.0",
-        "ghost-api": "v3"
+        "ghost": ">=5.54.1"
     },
     "license": "MIT",
     "screenshots": {
@@ -46,11 +45,10 @@
     "bugs": "https://github.com/joshperry/nerdycasper/issues",
     "contributors": "https://github.com/joshperry/nerdycasper/graphs/contributors",
     "devDependencies": {
-        "@tryghost/release-utils": "0.4.1",
         "autoprefixer": "9.7.4",
         "beeper": "2.0.0",
         "cssnano": "4.1.10",
-        "gscan": "3.3.3",
+        "gscan": "4.42.0",
         "gulp": "4.0.2",
         "gulp-concat": "2.6.1",
         "gulp-hash": "^4.2.2",
@@ -69,6 +67,7 @@
     ],
     "config": {
         "posts_per_page": 25,
+        "card_assets": true,
         "image_sizes": {
             "xxs": {
                 "width": 30
