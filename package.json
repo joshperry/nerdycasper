@@ -2,7 +2,7 @@
     "name": "nerdycasper",
     "description": "A nerdy, clean, minimal theme for nerdy users of the Ghost publishing platform",
     "demo": "https://curiouslynerdy.com",
-    "version": "1.1.2",
+    "version": "5.0.1",
     "engines": {
         "ghost": ">=5.54.1"
     },
@@ -60,7 +60,9 @@
         "postcss-color-function": "4.1.0",
         "postcss-custom-properties": "9.1.1",
         "postcss-easy-import": "3.0.0",
-        "pump": "3.0.0"
+        "pump": "3.0.0",
+        "terser": "<5",
+        "@tryghost/admin-api": "^1.13.11"
     },
     "browserslist": [
         "defaults"

@@ -293,6 +293,24 @@ const zipper = done => {
   )
 }
 
+const publish = async () => {
+  // The admin API client is the easiest way to use the API
+  const GhostAdminAPI = require('@tryghost/admin-api');
+
+  if(!process.env.GHOST_TOKEN)
+    throw new Error(`Cannot publish without GHOST_TOKEN set in your environment`)
+
+  // Configure the ghost client
+  const api = new GhostAdminAPI({
+    url: 'https://curiouslynerdy.com',
+    key: process.env.GHOST_TOKEN,
+    version: 'v5.0'
+  });
+
+  // Publish the built zipfile to the live site
+  await api.themes.upload({file: 'dist/nerdycasper.zip'})
+}
+
 const cssWatcher = () => watch('assets/css/**', css)
 const hbsWatcher = () => watch(['*.hbs', 'partials/**/*.hbs'], hbs)
 const jsWatcher = () => watch(['assets/js/**/*.js'], js)
@@ -304,122 +322,4 @@ exports.build = build
 exports.zip = series(build, zipper)
 exports.default = dev
 exports.hbs = hbs
-
-// release imports
-const path = require('path')
-const releaseUtils = require('@tryghost/release-utils')
-
-let config
-try {
-  config = require('./config')
-} catch (err) {
-  config = null
-}
-
-const REPO = 'joshperry/nerdycasper'
-const USER_AGENT = 'nerdycasper'
-const CHANGELOG_PATH = path.join(process.cwd(), '.', 'changelog.md')
-
-const changelog = ({previousVersion}) => {
-  const changelog = new releaseUtils.Changelog({
-    changelogPath: CHANGELOG_PATH,
-    folder: path.join(process.cwd(), '.')
-  })
-
-  changelog
-    .write({
-        githubRepoPath: `https://github.com/${REPO}`,
-        lastVersion: previousVersion
-    })
-    .sort()
-    .clean()
-}
-
-const previousRelease = () => {
-  return releaseUtils
-    .releases
-    .get({
-      userAgent: USER_AGENT,
-      uri: `https://api.github.com/repos/${REPO}/releases`
-    })
-    .then((response) => {
-      if (!response || !response.length) {
-        console.log('No releases found. Skipping')
-        return
-      }
-      let prevVersion = response[0].tag_name || response[0].name
-      console.log(`Previous version ${prevVersion}`)
-      return prevVersion
-    })
-}
-
-/**
- *
- * `npm run ship` will trigger `postship` task.
- *
- * [optional] For full automation
- *
- * `GHOST=2.10.1,2.10.0 npm run ship`
- * First value: Ships with Ghost
- * Second value: Compatible with Ghost/GScan
- *
- * You can manually run in case the task has thrown an error.
- *
- * `npm_package_version=0.5.0 gulp release`
- */
-const release = () => {
-  // require(./package.json) can run into caching issues, this re-reads from file everytime on release
-  const packageJSON = JSON.parse(fs.readFileSync('./package.json'))
-  let newVersion = packageJSON.version
-  let shipsWithGhost = '{version}'
-  let compatibleWithGhost = '2.10.0'
-  const ghostEnvValues = process.env.GHOST || null
-
-  if(ghostEnvValues) {
-    shipsWithGhost = ghostEnvValues.split(',')[0]
-    compatibleWithGhost = ghostEnvValues.split(',')[1]
-
-    if(!compatibleWithGhost) {
-      compatibleWithGhost = '2.10.0'
-    }
-  }
-
-  if(!newVersion || newVersion === '') {
-    console.log('Invalid version.')
-    return
-  }
-
-  console.log(`\nDraft release for ${newVersion}.`)
-
-  if(!config || !config.github || !config.github.username || !config.github.token) {
-    console.log('Please copy config.example.json and configure Github token.')
-    return
-  }
-
-  return previousRelease()
-    .then((previousVersion) => {
-      changelog({previousVersion})
-
-      return releaseUtils
-        .releases
-        .create({
-          draft: true,
-          preRelease: false,
-          tagName: newVersion,
-          releaseName: newVersion,
-          userAgent: USER_AGENT,
-          uri: `https://api.github.com/repos/${REPO}/releases`,
-          github: {
-            username: config.github.username,
-            token: config.github.token
-          },
-          content: [`**Ships with Ghost ${shipsWithGhost} Compatible with Ghost >= ${compatibleWithGhost}**\n\n`],
-          changelogPath: CHANGELOG_PATH
-        })
-        .then((response) => {
-          console.log(`\nRelease draft generated: ${response.releaseUrl}\n`)
-        })
-    })
-}
-
-exports.release = release
+exports.publish = series(exports.zip, publish)
