@@ -110,35 +110,21 @@ into the {body} of the default.hbs template --}}
             </section>
 
             {{!-- Giscus comments --}}
-            <script defer src="https://giscus.app/client.js"
-                    data-repo="joshperry/nerdycasper"
-                    data-repo-id="MDEwOlJlcG9zaXRvcnkyNDgwNTMyNzM="
-                    data-category="curiouslynerdy"
-                    data-category-id="DIC_kwDODsj-Gc4CcFyA"
-                    data-mapping="og:title"
-                    data-strict="1"
-                    data-reactions-enabled="1"
-                    data-emit-metadata="0"
-                    data-input-position="bottom"
-                    data-theme="preferred_color_scheme"
-                    data-lang="en"
-                    data-loading="lazy"
-                    crossorigin="anonymous"
-                    async>
-            </script>
-
-            {{!-- Email subscribe form at the bottom of the page
-            {{#if @labs.members}}
-                {{> subscribe-form}}
-            {{/if}}
-            --}}
-
-            {{!--
-            <section class="post-full-comments">
-                If you want to embed comments, this is a good place to do it!
-            </section>
-            --}}
-
+            <script defer type="module" src="https://cdn.skypack.dev/giscus"></script>
+            <giscus-widget
+                repo="joshperry/nerdycasper"
+                repo-id="MDEwOlJlcG9zaXRvcnkyNDgwNTMyNzM="
+                category="curiouslynerdy"
+                category-id="DIC_kwDODsj-Gc4CcFyA"
+                mapping="og:title"
+                strict="1"
+                reactions-enabled="1"
+                emit-metadata="0"
+                input-position="bottom"
+                theme="preferred_color_scheme"
+                lang="en"
+                loading="lazy"
+            ></giscus-widget>
         </article>
 
     </div>
