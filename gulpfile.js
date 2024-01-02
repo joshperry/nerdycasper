@@ -38,13 +38,6 @@ const handleError = (done) => {
   }
 }
 
-const hbs = done =>
-  pump(
-    src(['*.hbs', 'partials/**/*.hbs'], {base: './'}),
-    livereload(),
-    handleError(done)
-  )
-
 const hbsfixup = done => {
   pump(
     src(['*.hbs', 'partials/**/*.hbs'], {base: './'}),
@@ -82,74 +75,59 @@ const css = done => {
  */
 const fixuprefs = (manifestpath) => {
   const PREFIX = 'built/'
+  // Load module name to script manifest created by gulp-hash
+  // and mutate it to be a regex to hashed filename mapping.
+  // The goal is that the regex matches with/without PREFIX, and with/without the hash.
+  // Hashed version of `default.js` looks like `${PREFIX}default-abcdef01.js`
+  const modmap = Object.fromEntries(
+    Object.entries(JSON.parse(fs.readFileSync(manifestpath, 'utf8'))).map(([k, v]) => [
+      k,
+      {
+        // Regex as key gets converted to string so we store it in the value instead
+        regex: new RegExp(
+          // Potentially prefixed already
+          `(${PREFIX})?${k}`
+            // Escape . and / (including in prefix)
+            .replace(/(\.|\/){1}/g, '\\$1')
+            // Make regex that can match hashed and unhashed version of the filename
+            .replace(/(.*)(\\\.[^\.]+)$/, `"$1[-0-9a-f]{9}?$2"`),
+          // All finds, and all lines
+          'mg'
+        ),
+        target: `"${PREFIX}${v}"`
+      }
+    ])
+  )
 
-  let cache = []
+  return through.obj(function fixup(file, encoding, cb) {
+    stream = this
 
-  return through.obj(function collect(file, encoding, cb) {
-    if (file.isNull()) {
-      this.push(file)
+    // only hbs files should be searched for replaces
+    if (file.isNull() || !file.path.endsWith('.hbs')) {
       return cb()
     }
 
     if (file.isStream()) {
-      this.emit('error', new PluginError('fixuprefs', 'Streaming not supported'))
+      return cb(new PluginError('fixuprefs', 'Streaming not supported'))
+    }
+
+    // Get the hbs file contents
+    let contents = file.contents.toString('utf8')
+    const initcontents = contents.slice()
+
+    // Replace any matches from the module map
+    for (const [_, v] of Object.entries(modmap)) {
+      contents = contents.replace(v.regex, v.target)
+    }
+
+    // Don't push file if it hasn't changed
+    if (contents == initcontents) {
       return cb()
     }
 
-    // only hbs files should be searched for replaces
-    if (file.path.endsWith('.hbs')) {
-      cache.push(file)
-    } else {
-      // no interest in this file
-      this.push(file)
-    }
-
-    // map done
-    cb()
-  }, function fixup(cb) {
-    stream = this
-
-    // Load module name to script manifest created by gulp-hash
-    // and mutate it to be a regex to hashed filename mapping.
-    // The goal is that the regex matches with/without PREFIX, and with/without the hash.
-    // Hashed version of `default.js` looks like `${PREFIX}default-abcdef01.js`
-    const modmap = Object.fromEntries(
-      Object.entries(JSON.parse(fs.readFileSync(manifestpath, 'utf8'))).map(([k, v]) => [
-        k,
-        {
-          regex: new RegExp(
-            // Potentially prefixed already
-            `(${PREFIX})?${k}`
-              // Escape . and / (including in prefix)
-              .replace(/(\.|\/){1}/g, '\\$1')
-              // Make regex that can match hashed and unhashed version of the filename
-              .replace(/(.*)(\\\.[^\.]+)$/, `"$1[-0-9a-f]{9}?$2"`),
-            // All finds, and all lines
-            'mg'
-          ),
-          target: `"${PREFIX}${v}"`
-        }
-      ])
-    )
-
-    // For each collected file
-    for (const file of cache) {
-      let contents = file.contents.toString('utf8')
-
-      // Replace any matches from the module map
-      for (const [_, v] of Object.entries(modmap)) {
-        contents = contents.replace(v.regex, v.target)
-      }
-
-      // Update the vinyl file contents
-      file.contents = Buffer.from(contents, 'utf8')
-
-      // Push it onto the output
-      stream.push(file)
-    }
-
-    // reduce done
-    cb()
+    // Push the new contents onto the output
+    file.contents = Buffer.from(contents, 'utf8')
+    cb(null, file)
   })
 }
 
@@ -319,7 +297,9 @@ const publish = async () => {
 }
 
 const cssWatcher = () => watch('assets/css/**', css)
-const hbsWatcher = () => watch(['*.hbs', 'partials/**/*.hbs'], hbs)
+const hbsWatcher = () => watch(['*.hbs', 'partials/**/*.hbs']).on('change', (path, stats) => {
+  livereload.changed(path)
+})
 const jsWatcher = () => watch(['assets/js/**/*.js'], series(js, hbsfixup))
 const watcher = parallel(cssWatcher, hbsWatcher, jsWatcher)
 const build = series(parallel(css, js), hbsfixup)
@@ -328,5 +308,4 @@ const dev = series(build, serve, watcher)
 exports.build = build
 exports.zip = series(build, zipper)
 exports.default = dev
-exports.hbs = hbs
 exports.publish = series(exports.zip, publish)
