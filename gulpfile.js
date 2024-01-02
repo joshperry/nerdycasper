@@ -297,7 +297,7 @@ const cssWatcher = () => watch('assets/css/**', css)
 const hbsWatcher = () => watch(['*.hbs', 'partials/**/*.hbs'], hbs)
 const jsWatcher = () => watch(['assets/js/**/*.js'], js)
 const watcher = parallel(cssWatcher, hbsWatcher, jsWatcher)
-const build = parallel(css, js, hbs)
+const build = series(parallel(css, js), hbs)
 const dev = series(build, serve, watcher)
 
 exports.build = build
